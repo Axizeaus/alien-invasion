@@ -26,6 +26,7 @@ class AlienInvasion(object):
             self._check_events()
             # redraw the screen during each pass of the loop
             self._update_screen()
+            self.ship.update()
 
     def _check_events(self):
         """Respond the keyboard and mouse movement"""
@@ -37,9 +38,17 @@ class AlienInvasion(object):
                 if event.key == pygame.K_RIGHT:
                     # move the ship to the right
                     self.ship.moving_right = True
-                elif event.key == pygame.KEYUP:
-                    if event.key == pygame.K_RIGHT:
-                        self.ship.moving_right = False
+                elif event.key == pygame.K_LEFT:
+                    # move the ship to the left
+                    self.ship.moving_left = True
+
+            elif event.type == pygame.KEYUP:
+                # stop the movement
+                if event.key == pygame.K_RIGHT:
+                    self.ship.moving_right = False
+                elif event.key == pygame.K_LEFT:
+                    self.ship.moving_left = False
+
 
     def _update_screen(self):
         """Update images on the screen and flip to a new screen"""
