@@ -36,7 +36,7 @@ class AlienInvasion(object):
             elif event.type == pygame.KEYDOWN:
                 if event.type == pygame.K_RIGHT:
                     #move the ship to the right
-                    self.ship.rect.x += 1000
+                    self.ship.rect.x += 1
 
 
     def _update_screen(self):
