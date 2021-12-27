@@ -3,6 +3,7 @@ import pygame
 
 from settings import Settings
 from ship import Ship
+from bullet import Bullets
 
 
 class AlienInvasion(object):
@@ -20,6 +21,7 @@ class AlienInvasion(object):
         # making that little line on the game window
         pygame.display.set_caption("Alien Invasion version 1.0")
         self.ship = Ship(self)
+        self.bullets = pygame.sprite.Group()
 
     def run_game(self):
         """Running and quitting the game"""
@@ -28,6 +30,7 @@ class AlienInvasion(object):
             self._check_events()
             # redraw the screen during each pass of the loop
             self._update_screen()
+            self.bullets.update()
             self.ship.update()
 
     def _check_events(self):
@@ -52,6 +55,8 @@ class AlienInvasion(object):
         if event.key == pygame.K_q:
             # quit the game when pressed q
             sys.exit()
+        if event.key == pygame.K_SPACE:
+            self._fire_bullets()
 
     def _check_keyup_events(self, event):
         """Responds to key up events"""
@@ -61,10 +66,17 @@ class AlienInvasion(object):
         if event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
+    def _fire_bullets(self):
+        """Create a new bullet and add it to the bullets group"""
+        new_bullets = Bullets(self)
+        self.bullets.add(new_bullets)
+
     def _update_screen(self):
         """Update images on the screen and flip to a new screen"""
         self.screen.fill(self.settings.bg_colour)
         self.ship.blitme()
+        for bullets in self.bullets.sprites():
+            bullets.draw_bullet()
         pygame.display.flip()
 
 
