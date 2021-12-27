@@ -27,9 +27,16 @@ class Ship:
     def update(self):
         """Update the ship's position based on the movement flag"""
         # update the ship's x values, not the rect
+        # self.rect.right returns the right side of the rect of the ship
+        # and self.rect.left returns left
+        # the reason why the later is zero is because well, it's x,
+        # x and y starts from top left corner and x is horizontal
+        # which means x is either 0 or more in this case
+        # self.screen_rect.right returns the end of screen's ride side, here it's 1200
+        # because we made it 1200 * 800
         if self.moving_right and self.rect.right < self.screen_rect.right:
             self.x += self.settings.ship_speed
-        if self.moving_left and self.rect.left < self.screen_rect.left:
+        if self.moving_left and self.rect.left > 0:
             self.x -= self.settings.ship_speed
 
         # update rect object from self
