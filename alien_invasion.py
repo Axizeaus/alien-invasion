@@ -30,8 +30,10 @@ class AlienInvasion(object):
             self._check_events()
             # redraw the screen during each pass of the loop
             self._update_screen()
-            self.bullets.update()
+            self._update_bullets()
             self.ship.update()
+
+
 
     def _check_events(self):
         """Respond the keyboard and mouse movement"""
@@ -68,8 +70,9 @@ class AlienInvasion(object):
 
     def _fire_bullets(self):
         """Create a new bullet and add it to the bullets group"""
-        new_bullets = Bullets(self)
-        self.bullets.add(new_bullets)
+        if len(self.bullets) < self.settings.bullet_allowed:
+            new_bullets = Bullets(self)
+            self.bullets.add(new_bullets)
 
     def _update_screen(self):
         """Update images on the screen and flip to a new screen"""
@@ -78,6 +81,17 @@ class AlienInvasion(object):
         for bullets in self.bullets.sprites():
             bullets.draw_bullet()
         pygame.display.flip()
+
+    def _update_bullets(self):
+        """update position of bullets and get rid of old bullets"""
+        self.bullets.update()
+        # get rid of the bullets once they disappear from the window
+        # reason why : because those bullets just disappear from the view but
+        # they still exists which is taking up memory and processing power
+        # so in the long run, that'll cause problems
+        for bullets in self.bullets.copy():
+            if bullets.rect.bottom <= 0:
+                self.bullets.remove(bullets)
 
 
 if __name__ == '__main__':
