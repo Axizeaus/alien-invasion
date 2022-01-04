@@ -30,12 +30,13 @@ class AlienInvasion(object):
     def run_game(self):
         """Running and quitting the game"""
         while True:
+            self.ship.update()
             # checking the input ( keyboard and mouse )
             self._check_events()
             # redraw the screen during each pass of the loop
             self._update_screen()
             self._update_bullets()
-            self.ship.update()
+            self._update_aliens()
 
     def _check_events(self):
         """Respond the keyboard and mouse movement"""
@@ -124,6 +125,10 @@ class AlienInvasion(object):
         alien.rect.x = alien.x
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
+
+    def _update_aliens(self):
+        """Update the position of all aliens of a fleet """
+        self.aliens.update()
 
 
 if __name__ == '__main__':
