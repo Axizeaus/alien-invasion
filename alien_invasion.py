@@ -35,14 +35,15 @@ class AlienInvasion(object):
     def run_game(self):
         """Running and quitting the game"""
         while True:
-            self.ship.update()
+
             # checking the input ( keyboard and mouse )
             self._check_events()
             # redraw the screen during each pass of the loop
+            if self.stats.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
             self._update_screen()
-            self._update_bullets()
-            self._update_aliens()
-
     def _check_events(self):
         """Respond the keyboard and mouse movement"""
         for event in pygame.event.get():
@@ -152,6 +153,9 @@ class AlienInvasion(object):
         if pygame.sprite.spritecollideany(self.ship, self.aliens):
             self._ship_hit()
 
+        # look for aliens hitting the bottom of the screen
+        self._check_alien_bottom()
+
     def check_fleet_edges(self):
         """Responds appropriately if any alien reaches the edge"""
         for alien in self.aliens.sprites():
@@ -167,20 +171,31 @@ class AlienInvasion(object):
 
     def _ship_hit(self):
         """Responds to the ship being hit by alien"""
+        if self.stats.ship_left > 0:
+            # decrease the ship left
+            self.stats.ship_left -= 1
 
-        # decrease the ship left
-        self.stats.ship_left -= 1
+            # Get rid of any remaining aliens and bullets
+            self.aliens.empty()
+            self.bullets.empty()
 
-        # Get rid of any remaining aliens and bullets
-        self.aliens.empty()
-        self.bullets.empty()
+            # create a new fleet and center the ship
+            self._create_fleet()
+            self.ship.center_ship()
 
-        # create a new fleet and center the ship
-        self._create_fleet()
-        self.ship.center_ship()
+            # pause
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
 
-        # pause
-        sleep(0.5)
+    def _check_alien_bottom(self):
+        """Check if any alien has reached the bottom of the screen"""
+        screen_rect = self.screen.get_rect()
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= screen_rect.bottom:
+                # Treat the same as ship got hit
+                self._ship_hit()
+                break
 
 
 if __name__ == '__main__':
