@@ -19,16 +19,17 @@ class AlienInvasion(object):
         pygame.init()
         self.settings = Settings()
 
-        # Create an instance to store game statics and a scoreboard
-        self.sb = Scoreboard(self)
-        self.stats = GameStats(self)
-
         # making a full screen mode
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         # making that little line on the game window
         pygame.display.set_caption("Alien Invasion version 1.0")
+
+        # Create an instance to store game statics and a scoreboard
+        self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
+
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
@@ -77,6 +78,7 @@ class AlienInvasion(object):
             self.stats.reset_stats()
             self.stats.game_active = True
             self.sb.prep_score()
+            self.sb.prep_level()
 
             # Get rid of any remaining aliens and bullets
             self.aliens.empty()
@@ -154,11 +156,16 @@ class AlienInvasion(object):
             for alien in collisions.values():
                 self.stats.score += self.settings.alien_points * len(alien)
             self.sb.prep_score()
+            self.sb.prep_high_score()
         if not self.aliens:
             # Destroy existing bullets and create new fleet
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+
+            # increase level
+            self.stats.level += 1
+            self.sb.prep_level()
 
     def _create_fleet(self):
         """Create the fleet of aliens"""
